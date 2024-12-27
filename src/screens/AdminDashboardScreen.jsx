@@ -54,10 +54,10 @@ const AdminDashboardScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchUsersAndBookings = async () => {
       try {
-        const usersResponse = await axios.get('http://192.168.172.245:5000/admin/bookings');
+        const usersResponse = await axios.get('http://192.168.50.245:5000/admin/bookings');
         setUsers(usersResponse.data);
 
-        const bookingsResponse = await axios.get('http://192.168.172.245:5000/admin/bookings');
+        const bookingsResponse = await axios.get('http://192.168.50.245:5000/admin/bookings');
         setBookings(bookingsResponse.data);
 
         // Check for new bookings
