@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, ImageBackground, StyleSheet, Switch } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  ImageBackground,
+  StyleSheet,
+  Switch,
+} from 'react-native';
 import Toast from 'react-native-toast-message';
+import { Ionicons } from '@expo/vector-icons'; // Import Ionicons for icons
 
 const LandingScreen = ({ navigation }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -115,6 +124,14 @@ const LandingScreen = ({ navigation }) => {
             Continue as Guest
           </Text>
         </TouchableOpacity>
+
+        {/* Chatbot Icon */}
+        <TouchableOpacity
+          style={styles.chatbotButton}
+          onPress={() => navigation.navigate('ChatBotScreen')}
+        >
+          <Ionicons name="chatbubbles-outline" size={30} color="#fff" />
+        </TouchableOpacity>
       </View>
     </ImageBackground>
   );
@@ -208,6 +225,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textTransform: 'uppercase',
     letterSpacing: 1,
+  },
+  chatbotButton: {
+    position: 'absolute',
+    bottom: 40,
+    right: 20,
+    backgroundColor: '#6200ea',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 5 },
+    shadowRadius: 6,
+    elevation: 5,
   },
 });
 
