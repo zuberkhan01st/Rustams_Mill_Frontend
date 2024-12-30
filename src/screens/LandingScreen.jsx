@@ -9,7 +9,7 @@ import {
   Switch,
 } from 'react-native';
 import Toast from 'react-native-toast-message';
-import { Ionicons } from '@expo/vector-icons'; // Import Ionicons for icons
+import { Ionicons, MaterialIcons } from '@expo/vector-icons'; // Added MaterialIcons for Contact Us
 
 const LandingScreen = ({ navigation }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -125,6 +125,14 @@ const LandingScreen = ({ navigation }) => {
           </Text>
         </TouchableOpacity>
 
+        {/* Contact Us Icon */}
+        <TouchableOpacity
+          style={styles.contactUsButton}
+          onPress={() => navigation.navigate('ContactUsScreen')}
+        >
+          <MaterialIcons name="contact-phone" size={30} color="#fff" />
+        </TouchableOpacity>
+
         {/* Chatbot Icon */}
         <TouchableOpacity
           style={styles.chatbotButton}
@@ -231,6 +239,22 @@ const styles = StyleSheet.create({
     bottom: 40,
     right: 20,
     backgroundColor: '#6200ea',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 5 },
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  contactUsButton: {
+    position: 'absolute',
+    bottom: 40,
+    left: 20,
+    backgroundColor: '#f50057',
     width: 60,
     height: 60,
     borderRadius: 30,
