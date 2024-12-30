@@ -39,7 +39,7 @@ const LandingScreen = ({ navigation }) => {
     if (name && phone && address && selectedOption) {
       try {
         // Make the POST request to the backend
-        const response = await axios.post('http://192.168.50.245:5000/guest/book', {
+        const response = await axios.post('http://192.168.244.245:5000/guest/book', {
           name,
           phone,
           address,

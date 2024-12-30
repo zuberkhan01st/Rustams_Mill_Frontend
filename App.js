@@ -9,6 +9,7 @@ import AdminDashboardScreen from './src/screens/AdminDashboardScreen';
 import PastBookingsScreen from './src/screens/PastBookingsScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import ChatBotScreen from './src/screens/ChatBotScreen';
+import ContactUsScreen from './src/screens/ContactUsScreen';
 
 const Stack = createStackNavigator();
 
@@ -50,6 +51,11 @@ export default function App() {
           <Stack.Screen
             name="ChatBotScreen"
             component={ChatBotScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="ContactUsScreen"
+            component={ContactUsScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

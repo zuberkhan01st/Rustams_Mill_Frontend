@@ -1,45 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity, FlatList, Alert, ToastAndroid } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, RefreshControl, Alert } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 
 // Dummy screens for Users and Bookings
-const UsersScreen = ({ users }) => {
+const UsersScreen = ({ users, onRefresh, refreshing }) => {
   return (
     <View style={styles.screenContainer}>
       <Text style={styles.screenTitle}>Users List</Text>
-      <FlatList
-        data={users}
-        keyExtractor={(item) => item._id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
-            <Text style={styles.itemName}>{item.name}</Text> {/* Assuming each user has a name */}
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} // Ensure onRefresh is passed
+      >
+        {users.map((user) => (
+          <View key={user._id} style={styles.item}>
+            <Text style={styles.itemName}>{user.name}</Text>
           </View>
-        )}
-      />
+        ))}
+      </ScrollView>
     </View>
   );
 };
 
-const BookingsScreen = ({ bookings }) => {
+const BookingsScreen = ({ bookings, onRefresh, refreshing }) => {
   return (
     <View style={styles.screenContainer}>
       <Text style={styles.screenTitle}>Bookings List</Text>
-      <FlatList
-        data={bookings}
-        keyExtractor={(item) => item._id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.bookingItem}>
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} // Ensure onRefresh is passed
+      >
+        {bookings.map((item) => (
+          <View key={item._id} style={styles.bookingItem}>
             <Text style={styles.bookingTitle}>{item.name}</Text>
             <Text style={styles.bookingDetail}>Item: {item.item}</Text>
             <Text style={styles.bookingDetail}>Address: {item.address}</Text>
             <Text style={styles.bookingDetail}>Phone: {item.phone}</Text>
             <Text style={styles.bookingDetail}>Date: {new Date(item.createdAt).toLocaleString()}</Text>
           </View>
-        )}
-        showsVerticalScrollIndicator={false} // To remove the scroll indicator
-      />
+        ))}
+      </ScrollView>
     </View>
   );
 };
@@ -49,41 +48,38 @@ const Tab = createBottomTabNavigator();
 const AdminDashboardScreen = ({ navigation }) => {
   const [users, setUsers] = useState([]);
   const [bookings, setBookings] = useState([]);
-  const [prevBookings, setPrevBookings] = useState([]); // To track previous bookings data
+  const [isLoading, setIsLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const [usersResponse, bookingsResponse] = await Promise.all([
+        //axios.get('http://192.168.244.245:5000/admin/users'),
+        axios.get('http://192.168.244.245:5000/admin/bookings'),
+      ]);
+      setUsers(usersResponse.data); // Assuming response contains users data
+      setBookings(usersResponse.data); // Assuming response contains bookings data
+    } catch (error) {
+      Alert.alert('Error', 'Unable to fetch data from the server.');
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchUsersAndBookings = async () => {
-      try {
-        const usersResponse = await axios.get('http://192.168.50.245:5000/admin/bookings');
-        setUsers(usersResponse.data);
-
-        const bookingsResponse = await axios.get('http://192.168.50.245:5000/admin/bookings');
-        setBookings(bookingsResponse.data);
-
-        // Check for new bookings
-        if (prevBookings.length > 0 && bookingsResponse.data.length !== prevBookings.length) {
-          // If the bookings length is different, show a toast
-          ToastAndroid.show('New booking received!', ToastAndroid.SHORT);
-        }
-
-        // Set previous bookings to the current bookings after each fetch
-        setPrevBookings(bookingsResponse.data);
-
-      } catch (error) {
-        Alert.alert('Error', 'Unable to fetch data from the server.');
-        console.error(error);
-      }
-    };
-
-    // Fetch data every 10 seconds
-    const intervalId = setInterval(fetchUsersAndBookings, 5000);
-
-    // Clean up the interval on unmount
-    return () => clearInterval(intervalId);
-  }, [prevBookings]); // Rerun when previous bookings change
+    fetchData();
+  }, []);
 
   const handleLogout = () => {
     navigation.replace('LoginScreen');
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
   };
 
   return (
@@ -101,25 +97,32 @@ const AdminDashboardScreen = ({ navigation }) => {
 
       <Tab.Navigator
         screenOptions={{
-          tabBarActiveTintColor: '#6200ea',
-          tabBarInactiveTintColor: '#aaa',
-          tabBarStyle: { backgroundColor: '#fff', borderTopWidth: 0 },
+          tabBarActiveTintColor: '#fff',
+          tabBarInactiveTintColor: '#888',
+          tabBarStyle: {
+            backgroundColor: '#6200ea',
+            borderTopWidth: 0,
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            borderRadius: 15,
+            marginHorizontal: 10,
+            elevation: 8,
+          },
         }}
       >
-        
         <Tab.Screen
           name="Bookings"
-          component={() => <BookingsScreen bookings={bookings} />}
+          component={() => <BookingsScreen bookings={bookings} onRefresh={onRefresh} refreshing={refreshing} />}
           options={{
             tabBarIcon: ({ color }) => <Icon name="bookmarks" size={24} color={color} />,
             tabBarLabel: 'Bookings',
           }}
-
         />
-
         <Tab.Screen
           name="Users"
-          component={() => <UsersScreen users={users} />}
+          component={() => <UsersScreen users={users} onRefresh={onRefresh} refreshing={refreshing} />}
           options={{
             tabBarIcon: ({ color }) => <Icon name="people" size={24} color={color} />,
             tabBarLabel: 'Users',
@@ -138,20 +141,18 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#fff',
-    borderRadius: 12,
+    borderRadius: 15,
     padding: 24,
     marginBottom: 20,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-    borderWidth: 1,
-    borderColor: '#ddd',
+    shadowRadius: 12,
+    elevation: 8,
   },
   welcomeText: {
-    fontSize: 20,
-    fontWeight: '600',
+    fontSize: 22,
+    fontWeight: '700',
     color: '#333',
     marginBottom: 8,
   },
@@ -187,26 +188,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   screenTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 16,
+    color: '#6200ea',
   },
   bookingItem: {
     backgroundColor: '#fff',
     padding: 16,
-    marginBottom: 10,
-    borderRadius: 8,
+    marginBottom: 15,
+    borderRadius: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 2,
+    elevation: 4,
     borderWidth: 1,
     borderColor: '#ddd',
   },
   bookingTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '600',
     color: '#333',
   },
   bookingDetail: {
