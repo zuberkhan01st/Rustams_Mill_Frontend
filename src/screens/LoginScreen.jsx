@@ -18,7 +18,7 @@ const LoginScreen = ({ navigation }) => {
 
     try {
       // Replace this URL with your backend URL
-      const response = await axios.post('http://192.168.50.245:5000/admin/login', {
+      const response = await axios.post('http://192.168.244.245:5000/admin/login', {
         username: username,
         password: password,
       });
