@@ -6,27 +6,27 @@ This is the **React Native frontend** for **Rustam's Mill**, providing a mobile 
 
 ## Demo Screenshots
 
-### Home Screen
-![Home Screen](assets/IMG-20241231-WA0003.jpg)
+### Home Screen and Admin Login Screen
+<div style="display: flex; justify-content: space-around;">
+  <img src="assets/IMG-20241231-WA0003.jpg" alt="Home Screen" width="45%" />
+  <img src="assets/IMG-20241231-WA0004.jpg" alt="Admin Login Screen" width="45%" />
+</div>
 
 ---
 
-### Admin Login Screen
-![Admin Login](assets/IMG-20241231-WA0004.jpg)
+### Admin Dashboard Screen and Booking Screen
+<div style="display: flex; justify-content: space-around;">
+  <img src="assets/IMG-20241231-WA0005.jpg" alt="Admin Dashboard Screen" width="45%" />
+  <img src="assets/IMG-20241231-WA0006.jpg" alt="Booking Screen" width="45%" />
+</div>
 
+---
 
-
-### Admin Dashboard Screen
-![Admin Dashboard](assets/IMG-20241231-WA0005.jpg)
-
-### Booking Screen
-![Booking Screen](assets/IMG-20241231-WA0006.jpg)
-
-### Chatbot Screen
-![User Dashboard](assets/IMG-20241231-WA0008.jpg)
-
-### Contact Us Screen
-![User Dashboard](assets/IMG-20241231-WA0009.jpg)
+### Chatbot Screen and Contact Us Screen
+<div style="display: flex; justify-content: space-around;">
+  <img src="assets/IMG-20241231-WA0008.jpg" alt="Chatbot Screen" width="45%" />
+  <img src="assets/IMG-20241231-WA0009.jpg" alt="Contact Us Screen" width="45%" />
+</div>
 
 ---
 
