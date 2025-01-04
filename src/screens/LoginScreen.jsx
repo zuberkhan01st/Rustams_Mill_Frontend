@@ -1,12 +1,14 @@
+// LoginScreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import axios from 'axios'; // Import axios
 import { Ionicons } from '@expo/vector-icons'; // For icons
+import AsyncStorage from '@react-native-async-storage/async-storage'; // To store the token
 
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);  
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async () => {
     if (!username || !password) {
@@ -27,7 +29,7 @@ const LoginScreen = ({ navigation }) => {
 
       if (response.data.token) {
         // Store the token for future requests
-        // AsyncStorage.setItem('token', response.data.token);
+        await AsyncStorage.setItem('token', response.data.token);
 
         // Directly navigate to AdminDashboardScreen without showing an alert
         navigation.replace('AdminDashboard');
