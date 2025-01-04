@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, RefreshControl, A
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Dummy screens for Users and Bookings
 const UsersScreen = ({ users, onRefresh, refreshing }) => {
@@ -10,7 +11,7 @@ const UsersScreen = ({ users, onRefresh, refreshing }) => {
     <View style={styles.screenContainer}>
       <Text style={styles.screenTitle}>Users List</Text>
       <ScrollView
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} // Ensure onRefresh is passed
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         {users.map((user) => (
           <View key={user._id} style={styles.item}>
@@ -27,7 +28,7 @@ const BookingsScreen = ({ bookings, onRefresh, refreshing }) => {
     <View style={styles.screenContainer}>
       <Text style={styles.screenTitle}>Bookings List</Text>
       <ScrollView
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />} // Ensure onRefresh is passed
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         {bookings.map((item) => (
           <View key={item._id} style={styles.bookingItem}>
@@ -54,14 +55,26 @@ const AdminDashboardScreen = ({ navigation }) => {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const [usersResponse, bookingsResponse] = await Promise.all([
-        //axios.get('http://192.168.244.245:5000/admin/users'),
-        axios.get('http://192.168.244.245:5000/admin/bookings'),
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        Alert.alert('Error', 'You need to login first.');
+        return;
+      }
+
+      // Fetching users and bookings concurrently
+      const [bookingsResponse] = await Promise.all([
+        
+        axios.get('http://192.168.244.245:5000/admin/bookings', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
       ]);
-      setUsers(usersResponse.data); // Assuming response contains users data
-      setBookings(usersResponse.data); // Assuming response contains bookings data
+
+      setUsers(bookingsResponse.data); // Set the users data
+      setBookings(bookingsResponse.data); // Set the bookings data
     } catch (error) {
-      Alert.alert('Error', 'Unable to fetch data from the server.');
+      //Alert.alert('Error', 'Unable to fetch data from the server.');
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -74,6 +87,7 @@ const AdminDashboardScreen = ({ navigation }) => {
 
   const handleLogout = () => {
     navigation.replace('LoginScreen');
+    AsyncStorage.removeItem('token');
   };
 
   const onRefresh = async () => {
