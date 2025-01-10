@@ -64,7 +64,7 @@ const AdminDashboardScreen = ({ navigation }) => {
       // Fetching users and bookings concurrently
       const [bookingsResponse] = await Promise.all([
         
-        axios.get('http://192.168.244.245:5000/admin/bookings', {
+        axios.get('http://192.168.234.245:5000/admin/bookings', {
           headers: {
             Authorization: `Bearer ${token}`,
           },

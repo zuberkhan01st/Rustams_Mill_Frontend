@@ -1,32 +1,60 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Create Bottom Tab Navigator
 const Tab = createBottomTabNavigator();
 
 // Screen for Home
 const HomeScreen = ({ navigation }) => {
+  const [username, setUsername] = useState(null);
+
+  useEffect(() => {
+    // Fetch the stored username from AsyncStorage
+    const fetchUsername = async () => {
+      const storedUsername = await AsyncStorage.getItem('username');
+      if (storedUsername) {
+        setUsername(storedUsername);
+      }
+    };
+    fetchUsername();
+  }, []);
+
+  const handleLogout = async () => {
+    // Clear AsyncStorage when logging out
+    await AsyncStorage.clear();
+    Alert.alert('Logged Out', 'You have been logged out successfully.');
+    navigation.navigate('UserLoginScreen'); // Navigate to the login screen after logout
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>User Dashboard</Text>
+      <Text style={styles.text}>Welcome, {username || 'User'}</Text>
       <Text style={styles.text}>What would you like to do?</Text>
 
       {/* Buttons for navigation */}
-      <TouchableOpacity 
-        style={styles.button} 
+      <TouchableOpacity
+        style={styles.button}
         onPress={() => navigation.navigate('PastBookings')}
       >
         <Text style={styles.buttonText}>View Past Bookings</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity 
-        style={styles.button} 
+      <TouchableOpacity
+        style={styles.button}
         onPress={() => navigation.navigate('NewBooking')}
       >
         <Text style={styles.buttonText}>Make a New Booking</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.button, styles.logoutButton]}
+        onPress={handleLogout}
+      >
+        <Text style={styles.buttonText}>Log Out</Text>
       </TouchableOpacity>
     </View>
   );
@@ -34,13 +62,34 @@ const HomeScreen = ({ navigation }) => {
 
 // Screen for Past Bookings
 const PastBookingsScreen = () => {
+  const [pastBookings, setPastBookings] = useState([]);
+
+  useEffect(() => {
+    // Simulating fetching data for past bookings
+    const fetchPastBookings = async () => {
+      // Ideally, fetch from an API or database
+      const bookings = [
+        { id: 1, date: '2024-01-01', title: 'Booking 1' },
+        { id: 2, date: '2024-01-05', title: 'Booking 2' },
+      ];
+      setPastBookings(bookings);
+    };
+
+    fetchPastBookings();
+  }, []);
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Your Past Bookings</Text>
-      {/* Here, you can add a list of past bookings */}
-      <Text style={styles.text}>Booking 1 - Date</Text>
-      <Text style={styles.text}>Booking 2 - Date</Text>
-      {/* Add more booking information as needed */}
+      {pastBookings.length === 0 ? (
+        <Text style={styles.text}>No past bookings available</Text>
+      ) : (
+        pastBookings.map((booking) => (
+          <Text key={booking.id} style={styles.text}>
+            {booking.title} - {booking.date}
+          </Text>
+        ))
+      )}
     </View>
   );
 };
@@ -48,12 +97,15 @@ const PastBookingsScreen = () => {
 // Screen for New Booking
 const NewBookingScreen = () => {
   const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Make a New Booking</Text>
       {/* You can add a form or options to make a booking */}
-      <TouchableOpacity style={styles.button} onPress={() => {
-            navigation.navigate('GuestBooking');}}>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate('GuestBooking')}
+      >
         <Text style={styles.buttonText}>Book Now</Text>
       </TouchableOpacity>
     </View>
@@ -118,5 +170,8 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  logoutButton: {
+    backgroundColor: '#FF6347',
   },
 });

@@ -7,9 +7,13 @@ import GuestBookingScreen from './src/screens/GuestBookingScreen';
 import UserDashboardScreen from './src/screens/UserDashboardScreen';
 import AdminDashboardScreen from './src/screens/AdminDashboardScreen';
 import PastBookingsScreen from './src/screens/PastBookingsScreen';
-import LoginScreen from './src/screens/LoginScreen';
+import AdminLoginScreen from './src/screens/AdminLoginScreen';
 import ChatBotScreen from './src/screens/ChatBotScreen';
 import ContactUsScreen from './src/screens/ContactUsScreen';
+import UserLoginScreen from './src/screens/UserLoginScreen';
+import UserSignup from './src/screens/UserSignupScreen';
+import ResetPasswordScreen from './src/screens/ResetPasswordScreen';
+import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
 
 const Stack = createStackNavigator();
 
@@ -34,8 +38,8 @@ export default function App() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
-            name="LoginScreen"
-            component={LoginScreen}
+            name="AdminLoginScreen"
+            component={AdminLoginScreen}
             options={{ headerShown: false }}
           />
           <Stack.Screen
@@ -56,6 +60,26 @@ export default function App() {
           <Stack.Screen
             name="ContactUsScreen"
             component={ContactUsScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="UserLoginScreen"
+            component={UserLoginScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="UserSignupScreen"
+            component={UserSignup}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="ForgotPassword"
+            component={ForgotPasswordScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="ResetPassword"
+            component={ResetPasswordScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

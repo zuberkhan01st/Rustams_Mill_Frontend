@@ -82,7 +82,7 @@ const LandingScreen = ({ navigation }) => {
         {/* Buttons */}
         <TouchableOpacity
           style={[styles.button, styles.adminButton]}
-          onPress={() => navigation.navigate('LoginScreen')}
+          onPress={() => navigation.navigate('AdminLoginScreen')}
         >
           <Text
             style={[
@@ -96,7 +96,7 @@ const LandingScreen = ({ navigation }) => {
 
         <TouchableOpacity
           style={[styles.button, styles.userButton]}
-          onPress={() => navigation.navigate('UserDashboard')}
+          onPress={() => navigation.navigate('UserLoginScreen')}
         >
           <Text
             style={[
