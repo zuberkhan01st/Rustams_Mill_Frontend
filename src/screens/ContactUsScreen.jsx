@@ -42,7 +42,7 @@ const ContactUsScreen = ({ navigation }) => {
             };
 
             try {
-                const response = await fetch('http://192.168.244.245:5000/guest/contactus', {
+                const response = await fetch('http://192.168.234.245:5000/guest/contactus', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
