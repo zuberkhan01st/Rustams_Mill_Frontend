@@ -38,6 +38,16 @@ This is the **React Native frontend** for **Rustam's Mill**, providing a mobile 
 
 ---
 
+### Raise Grievance Screen & Related Mail
+<div style="display: flex; justify-content: space-around;">
+  <img src="assets/Greviance Screen.jpg" alt="Raise Grievance Screen" width="45%" />
+  <img src="assets/Grievance Mail.jpg" alt="Grievance Related Mail" width="45%" />
+  
+</div>
+
+---
+
+
 ## Features
 
 - **Mobile-first experience** for both **Android** and **iOS** platforms.

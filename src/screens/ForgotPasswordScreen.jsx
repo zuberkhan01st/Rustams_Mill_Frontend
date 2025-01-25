@@ -6,7 +6,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
 
   const handleRequestOTP = async () => {
     try {
-      const response = await fetch("http://192.168.234.245:5000/user/request-otp", {
+      const response = await fetch("http://192.168.97.245:5000/user/request-otp", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

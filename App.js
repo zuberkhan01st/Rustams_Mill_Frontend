@@ -14,6 +14,7 @@ import UserLoginScreen from './src/screens/UserLoginScreen';
 import UserSignup from './src/screens/UserSignupScreen';
 import ResetPasswordScreen from './src/screens/ResetPasswordScreen';
 import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
+import RaiseGrievanceScreen from './src/screens/RaiseGrevianceScreen';
 
 const Stack = createStackNavigator();
 
@@ -80,6 +81,11 @@ export default function App() {
           <Stack.Screen
             name="ResetPassword"
             component={ResetPasswordScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="RaiseGrievance"
+            component={RaiseGrievanceScreen}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

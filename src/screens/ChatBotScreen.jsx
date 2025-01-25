@@ -8,6 +8,7 @@ import {
   StyleSheet,
   ActivityIndicator,
   KeyboardAvoidingView,
+  ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -18,7 +19,7 @@ const ChatbotScreen = ({ navigation }) => {
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const backendAPI = 'http://192.168.234.245:5000/chatbot/chat'; // Replace with your backend API URL
+  const backendAPI = 'http://192.168.4.245:5000/chatbot/chat'; // Replace with your backend API URL
 
   const sendMessage = async () => {
     if (inputText.trim() === '') return;
@@ -85,6 +86,7 @@ const ChatbotScreen = ({ navigation }) => {
       </View>
 
       {/* Chat Messages */}
+  
       <FlatList
         data={messages}
         renderItem={renderMessage}
