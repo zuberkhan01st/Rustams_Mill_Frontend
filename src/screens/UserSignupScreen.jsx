@@ -23,7 +23,7 @@ const UserSignup = ({ navigation }) => {
     }
 
     try {
-      const response = await fetch("http://192.168.234.245:5000/user/signup", {
+      const response = await fetch("http://192.168.97.245:5000/user/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

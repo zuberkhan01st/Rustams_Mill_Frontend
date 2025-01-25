@@ -42,7 +42,7 @@ const ContactUsScreen = ({ navigation }) => {
             };
 
             try {
-                const response = await fetch('http://192.168.234.245:5000/guest/contactus', {
+                const response = await fetch('http://192.168.97.245:5000/guest/contactus', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -50,12 +50,12 @@ const ContactUsScreen = ({ navigation }) => {
                     body: JSON.stringify(formData), // Send the form data as a JSON payload
                 });
 
-                
+
 
                 const result = await response.json();
                 console.log('API Response:', result);
                 Alert.alert('Success', 'Your message has been sent!');
-                
+
                 // Reset the form after successful submission
                 setForm({
                     name: '',
@@ -109,6 +109,14 @@ const ContactUsScreen = ({ navigation }) => {
                 <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                     <FontAwesome name="send" size={18} color="#fff" />
                     <Text style={styles.buttonText}> Send Message</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={[styles.button, { backgroundColor: '#FF5733', marginTop: 20 }]} // Different color for distinction
+                    onPress={() => navigation.navigate('RaiseGrievance')}
+                >
+                    <FontAwesome name="file-text" size={18} color="#fff" />
+                    <Text style={styles.buttonText}> Raise Grievance</Text>
                 </TouchableOpacity>
             </View>
 
