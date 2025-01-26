@@ -66,7 +66,7 @@ const RaiseGrievanceScreen = () => {
         formdata.append('image', { uri: imageURL, name: filename, type });
 
         try{
-            const response = await fetch('http://192.168.4.245:5000/guest/grevience', {
+            const response = await fetch('https://rustams-mill-backend-i7yh.onrender.com/guest/grevience', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'multipart/form-data',

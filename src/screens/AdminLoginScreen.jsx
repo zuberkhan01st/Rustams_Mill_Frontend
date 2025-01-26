@@ -20,7 +20,7 @@ const LoginScreen = ({ navigation }) => {
 
     try {
       // Replace this URL with your backend URL
-      const response = await axios.post('http://192.168.97.245:5000/admin/login', {
+      const response = await axios.post('https://rustams-mill-backend-i7yh.onrender.com/admin/login', {
         username: username,
         password: password,
       });
