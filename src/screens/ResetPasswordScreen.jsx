@@ -22,7 +22,7 @@ const ResetPasswordScreen = ({ route,navigation }) => {
 
   const handleResetPassword = async () => {
     try {
-      const response = await fetch("http://192.168.97.245:5000/user/changepass", {
+      const response = await fetch("https://rustams-mill-backend-i7yh.onrender.com/user/changepass", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

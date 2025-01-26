@@ -1,46 +1,129 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, RefreshControl, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, RefreshControl, Alert, Dimensions } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
 
-// Dummy screens for Users and Bookings
-const UsersScreen = ({ users, onRefresh, refreshing }) => {
-  return (
-    <View style={styles.screenContainer}>
-      <Text style={styles.screenTitle}>Users List</Text>
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      >
-        {users.map((user) => (
-          <View key={user._id} style={styles.item}>
-            <Text style={styles.itemName}>{user.name}</Text>
-          </View>
-        ))}
-      </ScrollView>
-    </View>
-  );
-};
+const UsersScreen = ({ users, onRefresh, refreshing }) => (
+  <View style={styles.screenContainer}>
+    <Text style={styles.screenTitle}>Users List</Text>
+    <ScrollView
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
+      {users.map((user) => (
+        <View key={user._id} style={styles.item}>
+          <Text style={styles.itemName}>{user.name}</Text>
+        </View>
+      ))}
+    </ScrollView>
+  </View>
+);
 
-const BookingsScreen = ({ bookings, onRefresh, refreshing }) => {
+const BookingsScreen = ({ bookings, onRefresh, refreshing }) => (
+  <View style={styles.screenContainer}>
+    <Text style={styles.screenTitle}>Bookings List</Text>
+    <ScrollView
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
+      {bookings.map((item) => (
+        <View key={item._id} style={styles.bookingItem}>
+          <Text style={styles.bookingTitle}>{item.name}</Text>
+          <Text style={styles.bookingDetail}>Item: {item.item}</Text>
+          <Text style={styles.bookingDetail}>Address: {item.address}</Text>
+          <Text style={styles.bookingDetail}>Phone: {item.phone}</Text>
+          <Text style={styles.bookingDetail}>Date: {new Date(item.createdAt).toLocaleString()}</Text>
+        </View>
+      ))}
+    </ScrollView>
+  </View>
+);
+
+const VisualizationScreen = ({ users, bookings }) => {
+  const chartWidth = Dimensions.get('window').width - 32;
+
+  // Data for user-based bookings
+  const userBookingData = {
+    labels: users.map((u) => u.name),
+    datasets: [
+      {
+        data: users.map((u) => bookings.filter((b) => b.name === u.name).length),
+        strokeWidth: 2,
+      },
+    ],
+  };
+
+  // Data for monthly bookings
+  const monthlyBookingData = (() => {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthlyCounts = Array(12).fill(0);
+
+    bookings.forEach((b) => {
+      const month = new Date(b.createdAt).getMonth();
+      monthlyCounts[month]++;
+    });
+
+    return {
+      labels: months,
+      datasets: [
+        {
+          data: monthlyCounts,
+          strokeWidth: 2,
+        },
+      ],
+    };
+  })();
+
+  // Data for pie chart (percentage of bookings by user)
+  const pieChartData = users.map((user) => {
+    const count = bookings.filter((b) => b.name === user.name).length;
+    return {
+      name: user.name,
+      population: count,
+      color: `#${Math.floor(Math.random() * 16777215).toString(16)}`,
+      legendFontColor: '#7F7F7F',
+      legendFontSize: 12,
+    };
+  });
+
   return (
-    <View style={styles.screenContainer}>
-      <Text style={styles.screenTitle}>Bookings List</Text>
-      <ScrollView
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      >
-        {bookings.map((item) => (
-          <View key={item._id} style={styles.bookingItem}>
-            <Text style={styles.bookingTitle}>{item.name}</Text>
-            <Text style={styles.bookingDetail}>Item: {item.item}</Text>
-            <Text style={styles.bookingDetail}>Address: {item.address}</Text>
-            <Text style={styles.bookingDetail}>Phone: {item.phone}</Text>
-            <Text style={styles.bookingDetail}>Date: {new Date(item.createdAt).toLocaleString()}</Text>
-          </View>
-        ))}
-      </ScrollView>
-    </View>
+    <ScrollView style={styles.screenContainer}>
+      <Text style={styles.screenTitle}>Booking Statistics</Text>
+
+      {/* User-based bookings */}
+      <Text style={styles.chartTitle}>Bookings by User</Text>
+      <BarChart
+        data={userBookingData}
+        width={chartWidth}
+        height={250}
+        chartConfig={chartConfig}
+        style={styles.chart}
+      />
+
+      {/* Monthly bookings */}
+      <Text style={styles.chartTitle}>Monthly Bookings</Text>
+      <LineChart
+        data={monthlyBookingData}
+        width={chartWidth}
+        height={250}
+        chartConfig={chartConfig}
+        style={styles.chart}
+      />
+
+      {/* Pie chart */}
+      <Text style={styles.chartTitle}>Percentage of Bookings by User</Text>
+      <PieChart
+        data={pieChartData}
+        width={chartWidth}
+        height={250}
+        chartConfig={chartConfig}
+        accessor={'population'}
+        backgroundColor={'transparent'}
+        paddingLeft={'15'}
+        style={styles.chart}
+      />
+    </ScrollView>
   );
 };
 
@@ -49,11 +132,9 @@ const Tab = createBottomTabNavigator();
 const AdminDashboardScreen = ({ navigation }) => {
   const [users, setUsers] = useState([]);
   const [bookings, setBookings] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchData = async () => {
-    setIsLoading(true);
     try {
       const token = await AsyncStorage.getItem('token');
       if (!token) {
@@ -61,23 +142,20 @@ const AdminDashboardScreen = ({ navigation }) => {
         return;
       }
 
-      // Fetching users and bookings concurrently
-      const [bookingsResponse] = await Promise.all([
-        
-        axios.get('http://192.168.97.245:5000/admin/bookings', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      // Fetching users and bookings
+      const [usersResponse, bookingsResponse] = await Promise.all([
+        axios.get('https://rustams-mill-backend-i7yh.onrender.com/admin/bookings', {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.get('https://rustams-mill-backend-i7yh.onrender.com/admin/bookings', {
+          headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
 
-      setUsers(bookingsResponse.data); // Set the users data
-      setBookings(bookingsResponse.data); // Set the bookings data
+      setUsers(usersResponse.data);
+      setBookings(bookingsResponse.data);
     } catch (error) {
-      //Alert.alert('Error', 'Unable to fetch data from the server.');
       console.error(error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -86,7 +164,7 @@ const AdminDashboardScreen = ({ navigation }) => {
   }, []);
 
   const handleLogout = () => {
-    navigation.replace('LoginScreen');
+    navigation.replace('AdminLoginScreen');
     AsyncStorage.removeItem('token');
   };
 
@@ -116,10 +194,6 @@ const AdminDashboardScreen = ({ navigation }) => {
           tabBarStyle: {
             backgroundColor: '#6200ea',
             borderTopWidth: 0,
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
             borderRadius: 15,
             marginHorizontal: 10,
             elevation: 8,
@@ -128,18 +202,27 @@ const AdminDashboardScreen = ({ navigation }) => {
       >
         <Tab.Screen
           name="Bookings"
-          component={() => <BookingsScreen bookings={bookings} onRefresh={onRefresh} refreshing={refreshing} />}
+          component={() => (
+            <BookingsScreen bookings={bookings} onRefresh={onRefresh} refreshing={refreshing} />
+          )}
           options={{
             tabBarIcon: ({ color }) => <Icon name="bookmarks" size={24} color={color} />,
-            tabBarLabel: 'Bookings',
           }}
         />
         <Tab.Screen
           name="Users"
-          component={() => <UsersScreen users={users} onRefresh={onRefresh} refreshing={refreshing} />}
+          component={() => (
+            <UsersScreen users={users} onRefresh={onRefresh} refreshing={refreshing} />
+          )}
           options={{
             tabBarIcon: ({ color }) => <Icon name="people" size={24} color={color} />,
-            tabBarLabel: 'Users',
+          }}
+        />
+        <Tab.Screen
+          name="Visualization"
+          component={() => <VisualizationScreen users={users} bookings={bookings} />}
+          options={{
+            tabBarIcon: ({ color }) => <Icon name="analytics" size={24} color={color} />,
           }}
         />
       </Tab.Navigator>
@@ -147,93 +230,57 @@ const AdminDashboardScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#f5f5f5',
+const chartConfig = {
+  backgroundColor: '#fff',
+  backgroundGradientFrom: '#6200ea',
+  backgroundGradientTo: '#bb86fc',
+  decimalPlaces: 1,
+  color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+  labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+  style: {
+    borderRadius: 16,
   },
+  propsForDots: {
+    r: '6',
+    strokeWidth: '2',
+    stroke: '#ffa726',
+  },
+};
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 16, backgroundColor: '#f5f5f5' },
   card: {
     backgroundColor: '#fff',
     borderRadius: 15,
     padding: 24,
     marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
     elevation: 8,
   },
-  welcomeText: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#333',
-    marginBottom: 8,
-  },
-  infoText: {
-    fontSize: 16,
-    color: '#777',
-    lineHeight: 24,
-  },
-  actionContainer: {
-    marginBottom: 20,
-    alignItems: 'center',
-  },
+  welcomeText: { fontSize: 22, fontWeight: '700', color: '#333', marginBottom: 8 },
+  infoText: { fontSize: 16, color: '#777', lineHeight: 24 },
+  actionContainer: { marginBottom: 20, alignItems: 'center' },
   logoutButton: {
     backgroundColor: '#f43f5e',
     paddingVertical: 12,
     paddingHorizontal: 32,
     borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
     elevation: 6,
   },
-  logoutButtonText: {
-    fontSize: 16,
-    color: '#fff',
-    fontWeight: '500',
-    textAlign: 'center',
-  },
-  screenContainer: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
-  },
-  screenTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    color: '#6200ea',
-  },
+  logoutButtonText: { fontSize: 16, color: '#fff', fontWeight: '500' },
+  screenContainer: { flex: 1, padding: 16, backgroundColor: '#fff' },
+  screenTitle: { fontSize: 22, fontWeight: 'bold', marginBottom: 16, color: '#6200ea' },
   bookingItem: {
     backgroundColor: '#fff',
     padding: 16,
     marginBottom: 15,
     borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
     elevation: 4,
     borderWidth: 1,
     borderColor: '#ddd',
   },
-  bookingTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-  },
-  bookingDetail: {
-    fontSize: 14,
-    color: '#555',
-    marginTop: 4,
-  },
-  itemName: {
-    fontSize: 16,
-    color: '#333',
-  },
+  bookingTitle: { fontSize: 18, fontWeight: '600', color: '#333' },
+  bookingDetail: { fontSize: 14, color: '#555', marginTop: 4 },
+  itemName: { fontSize: 16, color: '#333' },
 });
 
 export default AdminDashboardScreen;

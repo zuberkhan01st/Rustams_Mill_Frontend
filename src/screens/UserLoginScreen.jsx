@@ -16,7 +16,7 @@ const UserLogin = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
-      const response = await fetch("http://192.168.97.245:5000/user/login", {
+      const response = await fetch("https://rustams-mill-backend-i7yh.onrender.com/user/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

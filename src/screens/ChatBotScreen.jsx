@@ -19,7 +19,7 @@ const ChatbotScreen = ({ navigation }) => {
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const backendAPI = 'http://192.168.4.245:5000/chatbot/chat'; // Replace with your backend API URL
+  const backendAPI = 'https://rustams-mill-backend-i7yh.onrender.com/chatbot/chat'; // Replace with your backend API URL
 
   const sendMessage = async () => {
     if (inputText.trim() === '') return;
