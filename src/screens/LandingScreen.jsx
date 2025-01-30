@@ -133,6 +133,7 @@ const LandingScreen = ({ navigation }) => {
           <MaterialIcons name="contact-phone" size={30} color="#fff" />
         </TouchableOpacity>
 
+
         {/* Chatbot Icon */}
         <TouchableOpacity
           style={styles.chatbotButton}

@@ -2,13 +2,14 @@
 
 This is the **React Native frontend** for **Rustam's Mill**, providing a mobile application for users to interact with the grinding mill services. The application is designed for a smooth, mobile-first experience on both **Android** and **iOS** platforms.
 
+---
+
 ## APK Download
 
 You can download the APK file for the **Rustam's Mill** mobile app from the link below:
 
 [Download APK](https://github.com/zuberkhan01st/Rustams_Mill_Frontend/raw/main/File/application-95beb1da-58f0-4a06-91e1-af1b3a0fca52.apk)
 
----
 
 ---
 
@@ -33,7 +34,7 @@ You can download the APK file for the **Rustam's Mill** mobile app from the link
 
 ### Admin Dashboard Screen and Booking Screen
 <div style="display: flex; justify-content: space-around;">
-  <img src="assets/IMG-20241231-WA0005.jpg" alt="Admin Dashboard Screen" width="45%" />
+  <img src="assets/Admin_Dashboard.jpg" alt="Admin Dashboard Screen" width="45%" />
   <img src="assets/IMG-20241231-WA0006.jpg" alt="Booking Screen" width="45%" />
 </div>
 
